@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt'); //package de cryptage pour les mdp
 const jwt = require('jsonwebtoken');
 const User = require('../models/User'); //récupération de notre modèle User
-const functions = require("../Services/users");
+const sauceServices = require("../services/users");
 
 // Création d'un utilisateur :
 exports.signup = (req, res, next) => {
-    if (functions.verifyPassword(req.body.password) && functions.verifyEmail(req.body.email)) {
+    if (sauceServices.verifyPassword(req.body.password) && sauceServices.verifyEmail(req.body.email)) {
         bcrypt
         .hash(req.body.password, 10) //Execution de l'algorithme de hachage
         .then(hash => { // récupération le hash de MDP
@@ -36,7 +36,7 @@ exports.login = (req, res, next) => { // récupération du login
                     if (!valid) {
                         return res.status(401).json({ error: 'Mot de passe incorrect !'});
                     } else { // envoi du Token
-                        functions.jwtToken(user._id, res);
+                        sauceServices.jwtToken(user._id, res);
                     }
                 })
                 .catch(error => res.status(500).json({ error }));

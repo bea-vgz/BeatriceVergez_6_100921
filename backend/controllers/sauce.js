@@ -1,6 +1,6 @@
 const Sauce = require('../models/Sauce'); // Import du modèle sauce créé dans le dossier models/Sauce.js
 const fs = require('fs'); // Import de fileSystem de node pour avoir accès aux différentes opérations liées au système de fichier (suppression image)
-const functions = require("../Services/sauces");
+const sauceServices = require("../services/sauces");
 
 // Création d'une nouvelle instance du modèle Sauce
 exports.createSauce = (req, res, next) => {
@@ -22,7 +22,7 @@ exports.createSauce = (req, res, next) => {
 
 // Modifier une sauce
 exports.modifySauce = (req, res, next) => { //soit on change l'image si une nouvelle est fournie soit on modifie juste le corps de la requête
-  functions.modifySauce(Sauce, req, res);
+  sauceServices.modifySauce(Sauce, req, res);
 };
 
 // Supprimer une sauce
@@ -61,10 +61,10 @@ exports.getAllSauces = (req, res, next) => {
 // Un seul like ou dislike par user 
 exports.likeDislikeSauce = (req, res, next) => {
   if (req.body.like === 1) {
-    functions.likeSauce(Sauce, req, res);
+    sauceServices.likeSauce(Sauce, req, res);
   } else if (req.body.like === -1) {
-    functions.dislikeSauce(Sauce, req, res);
+    sauceServices.dislikeSauce(Sauce, req, res);
   } else {
-    functions.likeDislike(Sauce, req, res);
+    sauceServices.likeDislike(Sauce, req, res);
   }
 }; 
