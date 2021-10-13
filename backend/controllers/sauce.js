@@ -22,20 +22,41 @@ exports.createSauce = (req, res, next) => {
 
 // Modifier une sauce
 exports.modifySauce = (req, res, next) => { //soit on change l'image si une nouvelle est fournie soit on modifie juste le corps de la requête
-  sauceServices.modifySauce(Sauce, req, res);
+  Sauce.findOne({ _id: req.params.id })
+  .then(sauce => {
+    if (sauce.userId !== req.user) {  // on compare l'id de l'auteur de la sauce et l'id de l'auteur de la requête
+      res.status(403).json({
+        message: "Requête non authentifiée"
+      }); // si ce ne sont pas les mêmes id = code 403: unauthorized.
+      return sauce;
+    }
+    const sauceObject = req.file ? //Création d'un sauceObject qui regarde si req.file existe ou non (S'il y a une nouvelle image)
+    { ...JSON.parse(req.body.sauce), // Récupération de toutes les infos sur l'objet
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //on modifie l’image URL
+    } : { ...req.body };
+    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id})
+    .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
+    .catch(error => res.status(400).json({ error })); 
+  });
 };
 
 // Supprimer une sauce
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
   .then(sauce => {
-      const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => { // suppression de l'image dans le dossier
-          Sauce.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
-          .catch(error => res.status(400).json({ error }));
-      });
-    })
+    if (sauce.userId !== req.user) {  // on compare l'id de l'auteur de la sauce et l'id de l'auteur de la requête
+      res.status(403).json({
+        message: "Requête non authentifiée"
+      }); // si ce ne sont pas les mêmes id = code 403: unauthorized.
+      return sauce;
+    }
+    const filename = sauce.imageUrl.split('/images/')[1];
+    fs.unlink(`images/${filename}`, () => { // suppression de l'image dans le dossier
+      Sauce.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
+        .catch(error => res.status(400).json({ error }));
+    });
+  })
   .catch(error => res.status(500).json({ error }));
 };
 //Utilisation de l'Id reçu en paramètre pour accéder à la sauce correspondante dans la base de donnée. 

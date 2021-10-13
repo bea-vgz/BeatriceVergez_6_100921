@@ -1,15 +1,5 @@
 const Sauce = require("../models/Sauce");
 
-// Modifier une sauce
-function modifySauce(Sauce, req, res) {
-    const sauceObject = req.file ? //Création d'un sauceObject qui regarde si req.file existe ou non (S'il y a une nouvelle image)
-    { ...JSON.parse(req.body.sauce), // Récupération de toutes les infos sur l'objet
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //on modifie l’image URL
-    } : { ...req.body };
-    return Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id}) 
-    .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
-    .catch(error => res.status(400).json({ error })); 
-};
 
 // Like / Dislike une sauce
 function likeSauce(Sauce, req, res) { //Methode update pour mettre à jour le like / Définit le statut « Like » pour l' userId fourni. 
@@ -38,7 +28,6 @@ function likeDislike(Sauce, req, res) { // if (like === 0) { Annulation d'un lik
     .catch(error => res.status(400).json({ error }))
 };
 
-exports.modifySauce = modifySauce;
 exports.likeSauce = likeSauce;
 exports.dislikeSauce = dislikeSauce;
 exports.likeDislike = likeDislike;
