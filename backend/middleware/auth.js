@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
           throw 'User ID non valide';
       } else {
         req.token = token;  
-        req.user = userId;  // on ajoute l'id du user: cela servira à l'authentification pour les routes delete et put. 
+        req.user = userId;  // on ajoute l'id du user pour l'authentification des routes delete et put (suppr + modification)
         next(); 
       }
   } catch {
