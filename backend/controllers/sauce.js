@@ -50,15 +50,15 @@ exports.deleteSauce = (req, res, next) => {
 // Afficher/Récupérer une sauce 
 exports.getOneSauce = (req, res, next) => { // Methode pour trouver une sauce unique
   Sauce.findOne({ _id: req.params.id }) // //La sauce est retournée dans une promesse envoyée au front
-  .then(sauce => res.status(200).json(sauce))
-  .catch(error => res.status(404).json({ error }));
+    .then(sauce => res.status(200).json(sauce))
+    .catch(error => res.status(404).json({ error }));
 };
 
 // Afficher/Récupérer toutes les sauces / renvoie un tableau contenant toutes les sauces dans la BDD
 exports.getAllSauces = (req, res, next) => {
   Sauce.find() 
-  .then(sauces => res.status(200).json(sauces))
-  .catch(error => res.status(400).json({ error }));
+    .then(sauces => res.status(200).json(sauces))
+    .catch(error => res.status(400).json({ error }));
 };
 
 // Fonction pour "liker" ou "disliker" une sauce
