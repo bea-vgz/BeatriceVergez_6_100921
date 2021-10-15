@@ -4,8 +4,8 @@ const Sauce = require("../models/Sauce");
 function modifySauce(req, res, next) {
     return Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
-            if (sauce.userId !== req.user) {  // on compare l'id de l'auteur de la sauce et l'id de l'auteur de la requête
-            res.status(403).json({ message: "Requête non authentifiée" });  // si ce ne sont pas les mêmes id = code 403: unauthorized
+            if (sauce.userId !== req.user) {  // comparaison de l'id de l'auteur de la création de la sauce à celui de la requête
+            res.status(403).json({ message: "Requête non authentifiée" });  // si ce ne sont pas les mêmes id on a un code 403: unauthorized
             return sauce;
         }
     const sauceObject = req.file ? //Création d'un sauceObject qui regarde si req.file existe ou non (S'il y a une nouvelle image)
