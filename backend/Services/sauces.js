@@ -1,13 +1,14 @@
 const Sauce = require("../models/Sauce");
 
 // Modifier une sauce
-async function modifySauce(req, res, next) {
-    const sauce = await Sauce.findOne({ _id: req.params.id });
-    if (sauce.userId !== req.user) { // on compare l'id de l'auteur de la sauce et l'id de l'auteur de la requête
-        res.status(403).json({ message: "Requête non authentifiée" }); // si ce ne sont pas les mêmes id = code 403: unauthorized
+function modifySauce(req, res, next) {
+    return Sauce.findOne({ _id: req.params.id })
+    .then(sauce => {
+      if (sauce.userId !== req.user) {  // on compare l'id de l'auteur de la sauce et l'id de l'auteur de la requête
+        res.status(403).json({ message: "Requête non authentifiée" });  // si ce ne sont pas les mêmes id = code 403: unauthorized
         return sauce;
-    }
-    const sauceObject = req.file ? //Création d'un sauceObject qui regarde si req.file existe ou non (S'il y a une nouvelle image)
+      }
+      const sauceObject = req.file ? //Création d'un sauceObject qui regarde si req.file existe ou non (S'il y a une nouvelle image)
         {
             ...JSON.parse(req.body.sauce),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //on modifie l’image URL
@@ -15,6 +16,8 @@ async function modifySauce(req, res, next) {
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
         .catch(error => res.status(400).json({ error }));
+      })
+    .catch(error => res.status(500).json({ error }));
 };
 
 // Like / Dislike une sauce
@@ -39,7 +42,7 @@ function likeDislike(Sauce, req, res) { // if (like === 0) { Annulation d'un lik
                 Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: req.body.userId }, $inc: { dislikes: -1 } })
                     .then(() => { res.status(200).json({ message: 'Suppression Dislike' }) })
                     .catch(error => res.status(400).json({ error }))
-                }
+            }
         })
     .catch(error => res.status(400).json({ error }))
 };
