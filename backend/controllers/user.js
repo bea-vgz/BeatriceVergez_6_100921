@@ -41,5 +41,5 @@ exports.login = (req, res, next) => { // récupération du login
                 })
                 .catch(error => res.status(500).json({ error }));
         })
-        .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error }));
 };
